@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="Theme.MyTheme" parent="android:Theme.Material.Light">
+
+        <!-- Here we setting appcompat’s actionBarStyle -->
+
+
+        <!-- The rest of your attributes -->
+    </style>
+
+</resources>
