@@ -22,7 +22,6 @@ import android.widget.ListView;
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.SongActivity;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
-import com.weaver.eric.orion.adapters.CustomArrayAdapter;
 import com.weaver.eric.orion.objects.AlbumTabItem;
 
 public class AlbumFragment extends Fragment implements OnItemClickListener
