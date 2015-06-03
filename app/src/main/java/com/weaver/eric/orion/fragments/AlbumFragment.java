@@ -39,7 +39,6 @@ public class AlbumFragment extends Fragment implements OnItemClickListener
 	
 	private ArrayList<AlbumTabItem> contentList;
 	private ArrayAdapter<AlbumTabItem> artistAdapter;
-	private CustomArrayAdapter adapter;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 

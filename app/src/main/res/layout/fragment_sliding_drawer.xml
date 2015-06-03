@@ -15,18 +15,13 @@
     sothree:umanoShadowHeight="4dp"
     sothree:umanoDragView="@+id/player_handle_container">
 
-     <LinearLayout
-        android:id="@+id/container_drawer"
+    <include android:id="@+id/container_drawer"
+        layout="@layout/fragment_list_layout"/>
+
+    <include android:id="@+id/container_drawer_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/container_drawer_player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" >
-    </LinearLayout>
+        layout="@layout/fragment_player"/>
+
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
