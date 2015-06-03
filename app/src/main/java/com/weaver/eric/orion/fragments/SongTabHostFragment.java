@@ -80,7 +80,6 @@ public class SongTabHostFragment extends Fragment implements OnItemClickListener
 		try
 		{
 			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			cursor.moveToFirst();
 			String title = null;
 			String artistName = null;
 			

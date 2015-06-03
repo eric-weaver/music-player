@@ -74,7 +74,6 @@ public class AlbumTabHostFragment extends Fragment implements OnItemClickListene
 		try
 		{
 			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			cursor.moveToFirst();
 			String title = null;
 			String albumCover = null;
 			String numSongs = null;

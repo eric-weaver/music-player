@@ -23,7 +23,6 @@ import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.SongActivity;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
 import com.weaver.eric.orion.adapters.CustomArrayAdapter;
-import com.weaver.eric.orion.managers.MusicManager;
 import com.weaver.eric.orion.objects.AlbumTabItem;
 
 public class AlbumFragment extends Fragment implements OnItemClickListener
@@ -34,8 +33,6 @@ public class AlbumFragment extends Fragment implements OnItemClickListener
 	private ListView musicList;
 	
 	private View mView;
-
-	private MusicManager musicManager;
 	
 	private ArrayList<AlbumTabItem> contentList;
 	private ArrayAdapter<AlbumTabItem> artistAdapter;
@@ -86,7 +83,7 @@ public class AlbumFragment extends Fragment implements OnItemClickListener
 		try
 		{
 			Cursor cursor = cr.query(uri, columns, where, selection, sort);
-			cursor.moveToFirst();
+
 			String title;
 			String albumCover;
 			String numSongs;

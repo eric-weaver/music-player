@@ -82,7 +82,6 @@ public class ArtistTabHostFragment extends Fragment implements
 		try
 		{
 			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			cursor.moveToFirst();
 			String title = null;
 			String numAlbums = null;
 			String numSongs = null;
