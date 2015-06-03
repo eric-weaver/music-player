@@ -12,7 +12,7 @@ import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.fragments.MainFragment;
 import com.weaver.eric.orion.fragments.PlayerFragment;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends BaseActivity
 {
 	
 	public static final String PREFS_NAME = "MyPrefsFile";

@@ -12,7 +12,7 @@ import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.fragments.AlbumFragment;
 import com.weaver.eric.orion.fragments.PlayerFragment;
 
-public class AlbumActivity extends ActionBarActivity
+public class AlbumActivity extends BaseActivity
 {	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
