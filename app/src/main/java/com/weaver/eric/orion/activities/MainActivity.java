@@ -1,38 +1,53 @@
 package com.weaver.eric.orion.activities;
 
-import android.content.Intent;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.fragments.MainFragment;
+import com.weaver.eric.orion.adapters.TabPagerItem;
+import com.weaver.eric.orion.adapters.TabsPagerAdapter;
+import com.weaver.eric.orion.fragments.AlbumTabHostFragment;
+import com.weaver.eric.orion.fragments.ArtistTabHostFragment;
 import com.weaver.eric.orion.fragments.PlayerFragment;
+import com.weaver.eric.orion.fragments.SongTabHostFragment;
+import com.weaver.eric.orion.view.SlidingTabLayout;
 
 public class MainActivity extends BaseActivity
 {
 	
 	public static final String PREFS_NAME = "MyPrefsFile";
+
+	private ViewPager viewPager;
+	private SlidingTabLayout mSlidingTabLayout;
+	private TabsPagerAdapter mAdapter;
+
+	private boolean loaded = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_sliding_drawer);
-		
-		Intent intent = getIntent();
-		String value = intent.getStringExtra("key");
-		Bundle bundle=new Bundle();
-		bundle.putString("key", value);
+		LinearLayout container = (LinearLayout)findViewById(R.id.container_drawer);
+		LayoutInflater layoutInflater =
+				(LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View addView = layoutInflater.inflate(R.layout.fragment_main, null);
+		container.addView(addView);
 		
 		Fragment playerFragment = new PlayerFragment();
-		Fragment fragment = new MainFragment();
-		fragment.setArguments(bundle);
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.container_drawer_player, playerFragment).add(R.id.container_drawer, fragment).commit();
+		ft.add(R.id.container_drawer_player, playerFragment).commit();
+
+		initialize();
 	}
 
 	@Override
@@ -66,17 +81,17 @@ public class MainActivity extends BaseActivity
 		super.onSaveInstanceState(savedInstanceState);
 		
 	}
-	
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-		
-	}
-	
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
+
+	private void initialize(){
+		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+		mAdapter.addTab(new TabPagerItem(new ArtistTabHostFragment(),getString(R.string.tab_artist_name), Color.BLUE, Color.GRAY));
+		mAdapter.addTab(new TabPagerItem(new AlbumTabHostFragment(),getString(R.string.tab_album_name), Color.BLUE, Color.GRAY));
+		mAdapter.addTab(new TabPagerItem(new SongTabHostFragment(), getString(R.string.tab_song_name), Color.BLUE, Color.GRAY));
+		viewPager.setOffscreenPageLimit(2);
+		viewPager.setAdapter(mAdapter);
+		mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+		mSlidingTabLayout.setViewPager(viewPager);
+
 	}
 }

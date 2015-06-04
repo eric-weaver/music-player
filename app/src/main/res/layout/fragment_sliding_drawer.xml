@@ -15,8 +15,11 @@
     sothree:umanoShadowHeight="4dp"
     sothree:umanoDragView="@+id/player_handle_container">
 
-    <include android:id="@+id/container_drawer"
-        layout="@layout/fragment_list_layout"/>
+    <LinearLayout
+        android:id="@+id/container_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
 
     <include android:id="@+id/container_drawer_player"
         android:layout_width="match_parent"

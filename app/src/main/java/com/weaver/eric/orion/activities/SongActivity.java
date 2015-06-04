@@ -2,6 +2,7 @@ package com.weaver.eric.orion.activities;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,11 +14,13 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
@@ -52,9 +55,13 @@ public class SongActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_sliding_drawer);
+        LinearLayout container = (LinearLayout)findViewById(R.id.container_drawer);
+        LayoutInflater layoutInflater =
+                (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View addView = layoutInflater.inflate(R.layout.fragment_list_layout, null);
+        container.addView(addView);
 
-        Intent intent = getIntent();
-        String value = intent.getStringExtra("key");
+        String value = getIntent().getStringExtra("key");
 
         Fragment playerFragment = new PlayerFragment();
 
