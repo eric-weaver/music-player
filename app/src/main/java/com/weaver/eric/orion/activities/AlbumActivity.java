@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +19,6 @@ import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
-import com.weaver.eric.orion.fragments.PlayerFragment;
 import com.weaver.eric.orion.objects.AlbumTabItem;
 
 import java.util.ArrayList;
@@ -54,10 +51,6 @@ public class AlbumActivity extends BaseActivity
 		container.addView(addView);
 
 		String value = getIntent().getStringExtra("key");
-		
-		Fragment playerFragment = new PlayerFragment();
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.container_drawer_player, playerFragment).commit();
 
 		initialize(value);
 	}

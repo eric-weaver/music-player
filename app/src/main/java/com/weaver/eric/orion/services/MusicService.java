@@ -21,6 +21,9 @@ public class MusicService extends Service implements
 
     //possible repeat states
     public enum RepeatState{ALL, ONE, NONE}
+    public enum ShuffleState{ON, OFF}
+    public enum PlayState{PLAYING, PAUSED}
+
     //tag for logs
     private static final String TAG = "MusicService";
 
@@ -31,15 +34,23 @@ public class MusicService extends Service implements
     private ArrayList<Song> songs;
     //current position
     private int songPosn;
+    //length of song time
+    private int songDuration;
     //is shuffle enabled
-    private boolean isShuffle;
+    private ShuffleState isShuffle;
     //state of repeat
     private RepeatState repeat;
+
+    private OnPreparedListener mPreparedListener;
 
     public class MusicBinder extends Binder {
         public MusicService getService() {
             return MusicService.this;
         }
+    }
+
+    public interface OnPreparedListener{
+        void onPrepared(String songName, int songDuration);
     }
 
     public MusicService() {
@@ -62,7 +73,7 @@ public class MusicService extends Service implements
         super.onCreate();
         //initialize position
         songPosn=0;
-        isShuffle = false;
+        isShuffle = ShuffleState.OFF;
         repeat = RepeatState.NONE;
         //create player
         player = new MediaPlayer();
@@ -72,7 +83,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        nextSong();
     }
 
     @Override
@@ -82,16 +93,26 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        songDuration = mp.getDuration();
         //start playback
         mp.start();
+        mPreparedListener.onPrepared(songs.get(songPosn).getSongName(), getSongDuration());
     }
 
-    public void setShuffle(boolean shuffle){
+    public void setShuffle(ShuffleState shuffle){
         isShuffle = shuffle;
     }
 
-    public boolean isShuffle(){
+    public ShuffleState isShuffle(){
         return isShuffle;
+    }
+
+    public void shuffle(){
+        if(isShuffle == ShuffleState.OFF){
+            setShuffle(ShuffleState.ON);
+        }else {
+            setShuffle(ShuffleState.OFF);
+        }
     }
 
     public void setRepeat(RepeatState repeat){
@@ -100,6 +121,25 @@ public class MusicService extends Service implements
 
     public RepeatState getRepeat(){
         return repeat;
+    }
+
+    public void repeat(){
+        if(repeat == RepeatState.NONE){
+            setRepeat(RepeatState.ALL);
+        }else if(repeat == RepeatState.ALL){
+            setRepeat(RepeatState.ONE);
+        }else{
+            setRepeat(RepeatState.NONE);
+        }
+    }
+
+    public PlayState isPlaying(){
+        //Override the is playing boolean with our own constants
+        if(player.isPlaying()){
+            return PlayState.PLAYING;
+        }else{
+            return PlayState.PAUSED;
+        }
     }
 
     public void initMusicPlayer(){
@@ -138,6 +178,46 @@ public class MusicService extends Service implements
 
     }
 
+    public void pauseSong(){
+        try{
+            if (player.isPlaying())
+            {
+                player.pause();
+            } else{
+                player.start();
+            }
+        }catch(IllegalStateException e){
+            Log.e(TAG, e.getLocalizedMessage(), e);
+        }
+    }
+
+    public void nextSong(){
+        if(repeat == RepeatState.ONE){
+            playSong();
+            return;
+        }
+        int lastPosn = songs.size() - 1;
+        if(songPosn == lastPosn){
+            if(repeat == RepeatState.ALL){
+                songPosn = 0;
+                playSong();
+            }else{
+                player.reset();
+            }
+        }else{
+            songPosn++;
+            playSong();
+        }
+    }
+
+    public void prevSong(){
+        if(songPosn != 0){
+            songPosn--;
+        }
+
+        playSong();
+    }
+
     public void setList(ArrayList<Song> theSongs){
         //TODO Figure out better way for setList
         songs=theSongs;
@@ -146,4 +226,35 @@ public class MusicService extends Service implements
     public void setSong(int songIndex){
         songPosn = songIndex;
     }
+
+    public void seekToPosition(int position)
+    {
+        player.seekTo(position * 1000);
+    }
+
+    public int getSongDuration(){
+        //Return the duration in seconds rather than milliseconds
+        return songDuration / 1000;
+    }
+
+    public int getSongPosition()
+    {
+        if (player == null) {
+            return 0;
+        }
+        return player.getCurrentPosition() / 1000;
+
+    }
+
+    public String getCurrentSong(){
+        if(songs == null){
+            return null;
+        }
+        return songs.get(songPosn).getSongName();
+    }
+
+    public void setOnPreparedListener(OnPreparedListener listener){
+        this.mPreparedListener = listener;
+    }
+
 }

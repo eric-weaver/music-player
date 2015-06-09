@@ -3,8 +3,6 @@ package com.weaver.eric.orion.activities;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +15,6 @@ import com.weaver.eric.orion.adapters.TabPagerItem;
 import com.weaver.eric.orion.adapters.TabsPagerAdapter;
 import com.weaver.eric.orion.fragments.AlbumTabHostFragment;
 import com.weaver.eric.orion.fragments.ArtistTabHostFragment;
-import com.weaver.eric.orion.fragments.PlayerFragment;
 import com.weaver.eric.orion.fragments.SongTabHostFragment;
 import com.weaver.eric.orion.view.SlidingTabLayout;
 
@@ -42,10 +39,6 @@ public class MainActivity extends BaseActivity
 				(LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View addView = layoutInflater.inflate(R.layout.fragment_main, null);
 		container.addView(addView);
-		
-		Fragment playerFragment = new PlayerFragment();
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.container_drawer_player, playerFragment).commit();
 
 		initialize();
 	}

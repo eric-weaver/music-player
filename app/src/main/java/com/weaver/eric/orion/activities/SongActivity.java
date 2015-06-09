@@ -3,7 +3,6 @@ package com.weaver.eric.orion.activities;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,8 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +22,6 @@ import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.SimpleSongAdapter;
-import com.weaver.eric.orion.fragments.PlayerFragment;
 import com.weaver.eric.orion.objects.Song;
 
 import java.io.FileDescriptor;
@@ -62,11 +58,6 @@ public class SongActivity extends BaseActivity {
         container.addView(addView);
 
         String value = getIntent().getStringExtra("key");
-
-        Fragment playerFragment = new PlayerFragment();
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.container_drawer_player, playerFragment).commit();
 
         initialize(value);
     }
