@@ -15,7 +15,11 @@
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="hello_world">Hello world!</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="preferences_music_service">music_service</string>
+    <string name="pref_song_pos">song_position</string>
+    <string name="pref_seek_pos">seek_pos</string>
+    <string name="pref_song_queue">song_queue</string>
+    <string name="pref_repeat_mode">repeat_mode</string>
+    <string name="pref_shuffle_mode">shuffle_mode</string>
 
 </resources>

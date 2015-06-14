@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.services.MusicService.PlayState;
-import com.weaver.eric.orion.services.MusicService.RepeatState;
-import com.weaver.eric.orion.services.MusicService.ShuffleState;
+import com.weaver.eric.orion.services.MusicService;
 
 public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener {
     //tag for logs
@@ -53,7 +51,7 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
         @Override
         public void onClick(View v) {
             mPlayerControlsListener.onPauseTouch();
-            mPlayerStateListener.requestPlayState();
+            mPlayerStateListener.requestPauseState();
         }
     };
 
@@ -86,6 +84,16 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
         }
         startPlayer();
         return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -125,7 +133,8 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
     }
 
     public interface OnPlayerStateListener{
-        void requestPlayState();
+        void requestPlayerState();
+        void requestPauseState();
         void requestShuffleState();
         void requestRepeatState();
     }
@@ -236,12 +245,12 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
         });
     }
 
-    public void setCurrentSong(String name, int duration){
+    public void setCurrentSong(String name, int duration, int progress){
         songDuration = duration;
         tvSongTitle.setText(name);
         tvStartTime.setText("0:00");
         tvEndTime.setText(formatTime(songDuration));
-        songProgressBar.setProgress(0);
+        songProgressBar.setProgress(progress);
         songProgressBar.setMax(songDuration);
     }
 
@@ -258,8 +267,8 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
         return formattedTime;
     }
 
-    public void setPlayState(PlayState state) {
-        if(state == PlayState.PLAYING){
+    public void setPlayState(int state) {
+        if(state == MusicService.PLAYING){
             if(landscape){
                 btnPlay.setImageResource(R.drawable.btn_pause_large);
             }else{
@@ -276,20 +285,20 @@ public class Player extends Fragment implements SeekBar.OnSeekBarChangeListener 
         }
     }
 
-    public void setShuffleState(ShuffleState state) {
-        if(state == ShuffleState.ON){
+    public void setShuffleState(int state) {
+        if(state == MusicService.SHUFFLE_ON){
             btnShuffle.setImageResource(R.drawable.btn_shuffle_on);
         }else{
             btnShuffle.setImageResource(R.drawable.btn_shuffle_off);
         }
     }
 
-    public void setRepeatState(RepeatState state) {
-        if(state == RepeatState.ALL){
+    public void setRepeatState(int state) {
+        if(state == MusicService.REPEAT_ALL){
             btnRepeat.setImageResource(R.drawable.btn_repeat_all);
-        }else if(state == RepeatState.ONE){
+        }else if(state == MusicService.REPEAT_SINGLE){
             btnRepeat.setImageResource(R.drawable.btn_repeat_one);
-        }else if(state == RepeatState.NONE){
+        }else if(state == MusicService.REPEAT_NONE){
             btnRepeat.setImageResource(R.drawable.btn_repeat_none);
         }
         else{

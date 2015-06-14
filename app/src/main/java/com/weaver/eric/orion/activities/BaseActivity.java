@@ -49,6 +49,7 @@ public abstract class BaseActivity extends ActionBarActivity implements Player.O
             musicSrv.setOnPreparedListener(BaseActivity.this);
             mHandler.postDelayed(mRunnable, 1000);
             musicBound = true;
+            setPlayerState();
         }
 
         @Override
@@ -72,13 +73,20 @@ public abstract class BaseActivity extends ActionBarActivity implements Player.O
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
+            //startService(playIntent);
         }
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setPlayerState();
+    }
+
+    @Override
     protected void onDestroy() {
-        stopService(playIntent);
+        //stopService(playIntent);
+        unbindService(musicConnection);
         musicSrv = null;
         super.onDestroy();
     }
@@ -115,16 +123,21 @@ public abstract class BaseActivity extends ActionBarActivity implements Player.O
     }
 
     @Override
-    public void onPrepared(String songName, int songDuration) {
+    public void onPrepared(String songName, int songDuration, int songPosition) {
         if(mPlayer != null && mPlayer.isAdded())
         {
-            mPlayer.setCurrentSong(songName, songDuration);
+            mPlayer.setCurrentSong(songName, songDuration, songPosition);
             mPlayer.setPlayState(musicSrv.isPlaying());
         }
     }
 
     @Override
-    public void requestPlayState() {
+    public void requestPlayerState() {
+
+    }
+
+    @Override
+    public void requestPauseState() {
         if(mPlayer != null && mPlayer.isAdded()) {
             mPlayer.setPlayState(musicSrv.isPlaying());
         }
@@ -158,6 +171,17 @@ public abstract class BaseActivity extends ActionBarActivity implements Player.O
         if(musicSrv.getCurrentSong() != null){
             int time = musicSrv.getSongPosition();
             mPlayer.updateProgress(time);
+        }
+    }
+
+    private void setPlayerState(){
+        if(musicBound){
+            if(mPlayer != null && mPlayer.isAdded()) {
+                mPlayer.setCurrentSong(musicSrv.getCurrentSong(), musicSrv.getSongDuration(), musicSrv.getSongPosition());
+                mPlayer.setPlayState(musicSrv.isPlaying());
+                mPlayer.setShuffleState(musicSrv.isShuffle());
+                mPlayer.setRepeatState(musicSrv.getRepeat());
+            }
         }
     }
 }
