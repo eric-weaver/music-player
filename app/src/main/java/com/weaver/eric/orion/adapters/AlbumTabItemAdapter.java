@@ -69,7 +69,9 @@ public class AlbumTabItemAdapter extends ArrayAdapter<AlbumTabItem>
 	    if(image != null)
 	    {
 	    	holder.image.setImageBitmap(BitmapFactory.decodeFile(image));
-	    }
+	    }else{
+			holder.image.setImageResource(R.drawable.music_notes);
+		}
 	    
 	    
 
