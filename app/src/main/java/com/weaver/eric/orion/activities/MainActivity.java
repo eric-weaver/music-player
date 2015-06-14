@@ -16,10 +16,12 @@ import com.weaver.eric.orion.adapters.TabsPagerAdapter;
 import com.weaver.eric.orion.fragments.AlbumTabHostFragment;
 import com.weaver.eric.orion.fragments.ArtistTabHostFragment;
 import com.weaver.eric.orion.fragments.SongTabHostFragment;
+import com.weaver.eric.orion.models.Song;
 import com.weaver.eric.orion.view.SlidingTabLayout;
 
-public class MainActivity extends BaseActivity
-{
+import java.util.ArrayList;
+
+public class MainActivity extends BaseActivity implements SongTabHostFragment.OnPlaylistChangeListener {
 	
 	public static final String PREFS_NAME = "MyPrefsFile";
 
@@ -40,7 +42,15 @@ public class MainActivity extends BaseActivity
 		final View addView = layoutInflater.inflate(R.layout.fragment_main, null);
 		container.addView(addView);
 
-		initialize();
+		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+		mAdapter.addTab(new TabPagerItem(new ArtistTabHostFragment(),getString(R.string.tab_artist_name), Color.BLUE, Color.GRAY));
+		mAdapter.addTab(new TabPagerItem(new AlbumTabHostFragment(),getString(R.string.tab_album_name), Color.BLUE, Color.GRAY));
+		mAdapter.addTab(new TabPagerItem(new SongTabHostFragment(), getString(R.string.tab_song_name), Color.BLUE, Color.GRAY));
+		viewPager.setOffscreenPageLimit(2);
+		viewPager.setAdapter(mAdapter);
+		mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+		mSlidingTabLayout.setViewPager(viewPager);
 	}
 
 	@Override
@@ -75,16 +85,12 @@ public class MainActivity extends BaseActivity
 		
 	}
 
-	private void initialize(){
-		viewPager = (ViewPager) findViewById(R.id.viewpager);
-		mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-		mAdapter.addTab(new TabPagerItem(new ArtistTabHostFragment(),getString(R.string.tab_artist_name), Color.BLUE, Color.GRAY));
-		mAdapter.addTab(new TabPagerItem(new AlbumTabHostFragment(),getString(R.string.tab_album_name), Color.BLUE, Color.GRAY));
-		mAdapter.addTab(new TabPagerItem(new SongTabHostFragment(), getString(R.string.tab_song_name), Color.BLUE, Color.GRAY));
-		viewPager.setOffscreenPageLimit(2);
-		viewPager.setAdapter(mAdapter);
-		mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-		mSlidingTabLayout.setViewPager(viewPager);
-
+	@Override
+	public void setPlaylist(ArrayList<Song> list, int position) {
+		if(musicBound){
+			musicSrv.setList(list);
+			musicSrv.setSong(position);
+			musicSrv.playSong();
+		}
 	}
 }

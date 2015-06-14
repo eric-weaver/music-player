@@ -1,14 +1,10 @@
 package com.weaver.eric.orion.fragments;
 
-import java.util.ArrayList;
-
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +16,13 @@ import android.widget.ListView;
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.AlbumActivity;
 import com.weaver.eric.orion.adapters.ArtistTabItemAdapter;
+import com.weaver.eric.orion.loaders.ArtistLoader;
 import com.weaver.eric.orion.models.Artist;
 
-public class ArtistTabHostFragment extends Fragment implements
-		OnItemClickListener
-{
+import java.util.ArrayList;
+import java.util.List;
+
+public class ArtistTabHostFragment extends Fragment implements OnItemClickListener, LoaderManager.LoaderCallbacks<List<Artist>>{
 	private View mView;
 	private ListView musicList;
 
@@ -39,72 +37,38 @@ public class ArtistTabHostFragment extends Fragment implements
 		View rootView = inflater.inflate(R.layout.fragment_list_layout,
 				container, false);
 		mView = rootView;
-		if (savedInstanceState != null)
-		{
-			// Restore last state for checked position.
-		}
-		initialize();
+		musicList = (ListView) mView.findViewById(R.id.list_simple);
+		artistAdapter =  new ArtistTabItemAdapter(this.getActivity(), R.layout.item_simple, new ArrayList<Artist>());
+		musicList.setAdapter(artistAdapter);
+		musicList.setOnItemClickListener(this);
+		getLoaderManager().initLoader(0, null, this);
 		return rootView;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> a, View v, int position, long id)
 	{
-		String value = contentList.get(position).getTitle();
+		Long value = contentList.get(position).getId();
 		Intent myIntent = new Intent(getActivity(), AlbumActivity.class);
 		myIntent.putExtra("key", value);
 		getActivity().startActivity(myIntent);
 	}
 
-	private void initialize()
-	{
-		contentList = new ArrayList<Artist>();
-		musicList = (ListView) mView.findViewById(R.id.list_simple);
-		contentList = getArtistItems();
-		artistAdapter =  new ArtistTabItemAdapter(this.getActivity(), R.layout.item_simple, contentList);
-		musicList.setAdapter(artistAdapter);
-		musicList.setOnItemClickListener(this);
+	@Override
+	public Loader<List<Artist>> onCreateLoader(int id, Bundle args) {
+		return new ArtistLoader(mView.getContext());
 	}
 
-	private ArrayList<Artist> getArtistItems()
-	{
-		ContentResolver cr = mView.getContext().getContentResolver();
-		Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-		String[] columns =
-		{ MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_ALBUMS, MediaStore.Audio.Artists.NUMBER_OF_TRACKS };
-		String sort = MediaStore.Audio.AudioColumns.ARTIST + " ASC";
-		ArrayList<Artist> listItems = new ArrayList<Artist>();
-		try
-		{
-			Cursor cursor = cr.query(uri, columns, null, null, sort);
-			long id;
-			String title;
-			String numAlbums;
-			String numSongs;
-			
-			Artist item;
-			while (cursor.moveToNext())
-			{
-				id = cursor
-						.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-				title = cursor
-						.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
-				numAlbums = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
-				numSongs = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
-				if (title.length() > 0)
-				{
-					item = new Artist(id, title, numAlbums, numSongs);
-					listItems.add(item);
-				}
-			}
-			cursor.close();
-		} catch (Exception e)
-		{
-			System.out.println("Failed to query Artists");
-			System.out.println(e);
-		}
-		return listItems;
+	@Override
+	public void onLoadFinished(Loader<List<Artist>> loader, List<Artist> data) {
+		contentList = new ArrayList<>(data);
+		artistAdapter =  new ArtistTabItemAdapter(this.getActivity(), R.layout.item_simple, contentList);
+		musicList.setAdapter(artistAdapter);
+		artistAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<Artist>> loader) {
+		musicList.setAdapter(null);
 	}
 }

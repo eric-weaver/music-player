@@ -2,35 +2,39 @@ package com.weaver.eric.orion.models;
 
 public class Album
 {
-	long id;
-	String title;
+	long albumId;
+	String albumName;
+	String artistName;
+	int songCount;
+	String year;
 	String imageUri;
-	String numSongs;
 	
-	public Album(long id, String title, String imageUri, String numSongs)
+	public Album(long id, String albumName, String artistName, int numSongs, String year, String imageUri)
 	{
-		this.id = id;
-		this.title = title;
+		this.albumId = id;
+		this.albumName = albumName;
+		this.artistName = artistName;
+		this.songCount = numSongs;
+		this.year = year;
 		this.imageUri = imageUri;
-		this.numSongs = numSongs;
 	}
 
 	public long getId() {
-		return id;
+		return albumId;
 	}
 
 	public void setId(long id) {
-		this.id = id;
+		this.albumId = id;
 	}
 
 	public String getTitle()
 	{
-		return title;
+		return albumName;
 	}
 
 	public void setTitle(String title)
 	{
-		this.title = title;
+		this.albumName = title;
 	}
 
 	public String getImageUri()
@@ -43,18 +47,18 @@ public class Album
 		this.imageUri = imageUri;
 	}
 
-	public String getNumSongs()
+	public int getNumSongs()
 	{
-		return numSongs;
+		return songCount;
 	}
 
-	public void setNumSongs(String numSongs)
+	public void setNumSongs(int numSongs)
 	{
-		this.numSongs = numSongs;
+		this.songCount = numSongs;
 	}
 	
 	public String getFormattedDescription()
 	{
-		return numSongs + " songs";
+		return songCount + " songs";
 	}
 }

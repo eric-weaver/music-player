@@ -1,107 +1,85 @@
 package com.weaver.eric.orion.fragments;
 
-import java.util.ArrayList;
-
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
+import android.app.Activity;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.SongTabItemAdapter;
+import com.weaver.eric.orion.loaders.SongLoader;
 import com.weaver.eric.orion.managers.MediaPlayerManager;
-import com.weaver.eric.orion.models.SongTabItem;
+import com.weaver.eric.orion.models.Song;
 
-public class SongTabHostFragment extends Fragment implements OnItemClickListener
-{
+import java.util.ArrayList;
+import java.util.List;
+
+public class SongTabHostFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Song>> {
 	private MediaPlayerManager mpManager;
-	
+
 	private View mView;
 	private ListView musicList;
 
-	private ArrayList<SongTabItem> contentList;
-	private ArrayAdapter<SongTabItem> artistAdapter;
-	private SongTabItemAdapter adapter;
-	
+	private ArrayList<Song> contentList;
+	private ArrayAdapter<Song> songAdapter;
+	private OnPlaylistChangeListener mPlaylistListener;
+
+	private AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			mPlaylistListener.setPlaylist(contentList, position);
+		}
+	};
+
+	public interface OnPlaylistChangeListener{
+		void setPlaylist(ArrayList<Song> list, int position);
+	}
+
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
-	{
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_list_layout, container, false);
 		mView = rootView;
-		initialize();
+		musicList = (ListView) mView.findViewById(R.id.list_simple);
+		songAdapter = new SongTabItemAdapter(this.getActivity(), R.layout.item_simple, new ArrayList<Song>());
+		musicList.setAdapter(songAdapter);
+		musicList.setOnItemClickListener(listClickListener);
+		getLoaderManager().initLoader(0, null, this);
 		return rootView;
 	}
-	
+
 	@Override
-	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
-	{
-//		String value = contentList.get(position).getTitle();
-//		mpManager.setPlaylist(contentList, musicManager.getPlaylistData(songList));
-//		mpManager.setFirstSong(value);
-//		mpManager.setSongUpdated(true);
-//		Intent myIntent = new Intent(getActivity(), PlayerActivity.class);
-//		myIntent.putExtra("key", value);
-//		this.startActivity(myIntent);
-		
-	}
-	
-	private void initialize()
-	{
-		mpManager = MediaPlayerManager.getInstance();
-		contentList = new ArrayList<SongTabItem>();
-		musicList = (ListView) mView.findViewById(R.id.list_simple);
-		contentList = getSongItems();
-		artistAdapter =  new SongTabItemAdapter(this.getActivity(), R.layout.item_simple, contentList);
-		musicList.setAdapter(artistAdapter);
-		musicList.setOnItemClickListener(this);
-	}
-	
-	private ArrayList<SongTabItem> getSongItems()
-	{
-		ContentResolver cr = mView.getContext().getContentResolver();
-		String where = null;
-		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		String artist = MediaStore.Audio.Media.ARTIST;
-		String song = MediaStore.Audio.Media.TITLE;
-		String[] columns =
-		{ artist, song };
-		String sort = MediaStore.Audio.AudioColumns.TITLE + " ASC";
-		ArrayList<SongTabItem> listItems = new ArrayList<SongTabItem>();
-		try
-		{
-			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			String title = null;
-			String artistName = null;
-			
-			SongTabItem item;
-			while (cursor.moveToNext())
-			{
-				title = cursor
-						.getString(cursor.getColumnIndexOrThrow(song));
-				artistName = cursor.getString(cursor
-						.getColumnIndexOrThrow(artist));
-				
-				if (title.length() > 0)
-				{
-					item = new SongTabItem(title, artistName);
-					listItems.add(item);
-				}
-			}
-			cursor.close();
-		} catch (Exception e)
-		{
-			System.out.println("Failed to query Artists");
-			System.out.println(e);
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mPlaylistListener = (OnPlaylistChangeListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ e.getLocalizedMessage());
 		}
-		return listItems;
+	}
+
+	@Override
+	public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+		return new SongLoader(mView.getContext());
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<Song>> loader, List<Song> data) {
+		contentList = new ArrayList<>(data);
+		songAdapter =  new SongTabItemAdapter(this.getActivity(), R.layout.item_simple, contentList);
+		musicList.setAdapter(songAdapter);
+		songAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<Song>> loader) {
+		musicList.setAdapter(null);
 	}
 }

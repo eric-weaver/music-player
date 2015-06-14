@@ -7,23 +7,27 @@ import android.graphics.Bitmap;
  */
 public class Song {
 
-    private long id;
+    private long songId;
     private String songName;
+    private String songArtist;
+    private String songAlbum;
+    private long songDuration;
     private Bitmap albumCover;
 
-    public Song(long id, String songName, Bitmap albumCover) {
-        this.id = id;
+    public Song(long songId, String songName, String songArtist, String songAlbum, long songDuration) {
+        this.songId = songId;
         this.songName = songName;
-        this.albumCover = albumCover;
-
+        this.songArtist = songArtist;
+        this.songAlbum = songAlbum;
+        this.songDuration = songDuration;
     }
 
     public long getId() {
-        return id;
+        return songId;
     }
 
     public void setId(long id) {
-        this.id = id;
+        this.songId = id;
     }
 
     public String getSongName() {
@@ -40,5 +44,13 @@ public class Song {
 
     public void setAlbumCover(Bitmap albumCover) {
         this.albumCover = albumCover;
+    }
+
+    public String getSongArtist() {
+        return songArtist;
+    }
+
+    public void setSongArtist(String songArtist) {
+        this.songArtist = songArtist;
     }
 }

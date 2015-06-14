@@ -1,7 +1,5 @@
 package com.weaver.eric.orion.adapters;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +8,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.models.SongTabItem;
+import com.weaver.eric.orion.models.Song;
 
-public class SongTabItemAdapter extends ArrayAdapter<SongTabItem>
+import java.util.ArrayList;
+
+public class SongTabItemAdapter extends ArrayAdapter<Song>
 {
 	private Activity context;
-	private ArrayList<SongTabItem> objects;
+	private ArrayList<Song> objects;
 	private int resource;
 
 	static class ViewHolder
@@ -25,7 +25,7 @@ public class SongTabItemAdapter extends ArrayAdapter<SongTabItem>
 	}
 
 	public SongTabItemAdapter(Activity context, int resource,
-			ArrayList<SongTabItem> objects)
+			ArrayList<Song> objects)
 	{
 		super(context, resource, objects);
 		this.context = context;
@@ -51,8 +51,8 @@ public class SongTabItemAdapter extends ArrayAdapter<SongTabItem>
 		
 		// fill data
 	    ViewHolder holder = (ViewHolder) rowView.getTag();
-	    String title = objects.get(position).getTitle();
-	    String description = objects.get(position).getArtist();
+	    String title = objects.get(position).getSongName();
+	    String description = objects.get(position).getSongArtist();
 	    if(title != null)
 	    {
 	    	holder.title.setText(title);

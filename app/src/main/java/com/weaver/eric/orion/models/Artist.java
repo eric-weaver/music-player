@@ -3,16 +3,16 @@ package com.weaver.eric.orion.models;
 public class Artist
 {
 	long id;
-	String title;
-	String numAlbums;
-	String numSongs;
+	String artistName;
+	int albumCount;
+	int songCount;
 	
-	public Artist(long id, String title, String numAlbums, String numSongs)
+	public Artist(long id, String title, int numAlbums, int numSongs)
 	{
 		this.id = id;
-		this.title = title;
-		this.numAlbums = numAlbums;
-		this.numSongs = numSongs;
+		this.artistName = title;
+		this.albumCount = numAlbums;
+		this.songCount = numSongs;
 	}
 
 	public long getId() {
@@ -25,36 +25,36 @@ public class Artist
 
 	public String getTitle()
 	{
-		return title;
+		return artistName;
 	}
 
 	public void setTitle(String title)
 	{
-		this.title = title;
+		this.artistName = title;
 	}
 
-	public String getNumAlbums()
+	public int getNumAlbums()
 	{
-		return numAlbums;
+		return albumCount;
 	}
 
-	public void setNumAlbums(String numAlbums)
+	public void setNumAlbums(int numAlbums)
 	{
-		this.numAlbums = numAlbums;
+		this.albumCount = numAlbums;
 	}
 
-	public String getNumSongs()
+	public int getNumSongs()
 	{
-		return numSongs;
+		return songCount;
 	}
 
-	public void setNumSongs(String numSongs)
+	public void setNumSongs(int numSongs)
 	{
-		this.numSongs = numSongs;
+		this.songCount = numSongs;
 	}	
 	
 	public String getFormattedDescription()
 	{
-		return numAlbums + " albums, " + numSongs + " songs";
+		return albumCount + " albums, " + songCount + " songs";
 	}
 }

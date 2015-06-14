@@ -1,13 +1,10 @@
 package com.weaver.eric.orion.activities;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,23 +16,28 @@ import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
+import com.weaver.eric.orion.loaders.ArtistAlbumLoader;
 import com.weaver.eric.orion.models.Album;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class AlbumActivity extends BaseActivity
-{
+public class AlbumActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<List<Album>> {
 	//tag for logs
 	private static final String TAG = "AlbumActivity";
 
+	private Long mArtistId;
+
 	private ArrayList<Album> contentList;
+	private ArrayAdapter<Album> albumAdapter;
+	private ListView musicList;
 
 	private AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			String value = contentList.get(position).getTitle();
+			Long albumId = contentList.get(position).getId();
 			Intent myIntent = new Intent(view.getContext(), SongActivity.class);
-			myIntent.putExtra("key", value); //Optional parameters
+			myIntent.putExtra("key", albumId); //Optional parameters
 			view.getContext().startActivity(myIntent);
 		}
 	};
@@ -50,9 +52,9 @@ public class AlbumActivity extends BaseActivity
 		final View addView = layoutInflater.inflate(R.layout.fragment_list_layout, null);
 		container.addView(addView);
 
-		String value = getIntent().getStringExtra("key");
+		mArtistId = getIntent().getLongExtra("key", 0);
 
-		initialize(value);
+		initialize();
 	}
 
 	@Override
@@ -74,59 +76,29 @@ public class AlbumActivity extends BaseActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void initialize(String value)
-	{
-		contentList = new ArrayList<>();
-		ListView musicList = (ListView) findViewById(R.id.list_simple);
-		contentList = getAlbumItems(value);
-		ArrayAdapter<Album> artistAdapter =  new AlbumTabItemAdapter(this, R.layout.item_simple_image, contentList);
-		musicList.setAdapter(artistAdapter);
-		musicList.setOnItemClickListener(listClickListener);
-
+	@Override
+	public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
+		return new ArtistAlbumLoader(this, mArtistId);
 	}
 
-	private ArrayList<Album> getAlbumItems(String artist)
+	@Override
+	public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
+		contentList = new ArrayList<>(data);
+		musicList.setAdapter(new AlbumTabItemAdapter(this, R.layout.item_simple_image, contentList));
+		albumAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<Album>> loader) {
+		musicList.setAdapter(null);
+	}
+
+	private void initialize()
 	{
-		ContentResolver cr = this.getContentResolver();
-
-		Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-		String where = MediaStore.Audio.Albums.ARTIST + "=?";
-		String[] selection = { artist };
-		String[] columns =
-				{ MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.NUMBER_OF_SONGS, MediaStore.Audio.Albums.ALBUM_ART };
-		String sort = MediaStore.Audio.AudioColumns.ALBUM + " ASC";
-		ArrayList<Album> listItems = new ArrayList<>();
-		try
-		{
-			Cursor cursor = cr.query(uri, columns, where, selection, sort);
-			long id;
-			String title;
-			String albumCover;
-			String numSongs;
-
-			Album item;
-			while (cursor.moveToNext())
-			{
-				id = cursor
-						.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
-				title = cursor
-						.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
-				albumCover = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART));
-				numSongs = cursor.getString(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
-
-				if (title.length() > 0)
-				{
-					item = new Album(id, title, albumCover, numSongs);
-					listItems.add(item);
-				}
-			}
-			cursor.close();
-		} catch (Exception e)
-		{
-			Log.e(TAG, e.getLocalizedMessage(), e);
-		}
-		return listItems;
+		musicList = (ListView) findViewById(R.id.list_simple);
+		albumAdapter =  new AlbumTabItemAdapter(this, R.layout.item_simple_image, new ArrayList<Album>());
+		musicList.setAdapter(albumAdapter);
+		musicList.setOnItemClickListener(listClickListener);
+		getSupportLoaderManager().initLoader(0, null, this);
 	}
 }
