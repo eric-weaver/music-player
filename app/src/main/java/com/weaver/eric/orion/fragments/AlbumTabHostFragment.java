@@ -12,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.SongActivity;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
