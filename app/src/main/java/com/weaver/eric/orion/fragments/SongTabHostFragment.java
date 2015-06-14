@@ -3,7 +3,6 @@ package com.weaver.eric.orion.fragments;
 import java.util.ArrayList;
 
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import android.widget.ListView;
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.SongTabItemAdapter;
 import com.weaver.eric.orion.managers.MediaPlayerManager;
-import com.weaver.eric.orion.objects.SongTabItem;
+import com.weaver.eric.orion.models.SongTabItem;
 
 public class SongTabHostFragment extends Fragment implements OnItemClickListener
 {

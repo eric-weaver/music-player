@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.objects.SongTabItem;
+import com.weaver.eric.orion.models.SongTabItem;
 
 public class SongTabItemAdapter extends ArrayAdapter<SongTabItem>
 {

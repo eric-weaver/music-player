@@ -19,7 +19,7 @@ import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
-import com.weaver.eric.orion.objects.AlbumTabItem;
+import com.weaver.eric.orion.models.Album;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,7 @@ public class AlbumActivity extends BaseActivity
 	//tag for logs
 	private static final String TAG = "AlbumActivity";
 
-	private ArrayList<AlbumTabItem> contentList;
+	private ArrayList<Album> contentList;
 
 	private AdapterView.OnItemClickListener listClickListener = new AdapterView.OnItemClickListener() {
 		@Override
@@ -79,13 +79,13 @@ public class AlbumActivity extends BaseActivity
 		contentList = new ArrayList<>();
 		ListView musicList = (ListView) findViewById(R.id.list_simple);
 		contentList = getAlbumItems(value);
-		ArrayAdapter<AlbumTabItem> artistAdapter =  new AlbumTabItemAdapter(this, R.layout.item_simple_image, contentList);
+		ArrayAdapter<Album> artistAdapter =  new AlbumTabItemAdapter(this, R.layout.item_simple_image, contentList);
 		musicList.setAdapter(artistAdapter);
 		musicList.setOnItemClickListener(listClickListener);
 
 	}
 
-	private ArrayList<AlbumTabItem> getAlbumItems(String artist)
+	private ArrayList<Album> getAlbumItems(String artist)
 	{
 		ContentResolver cr = this.getContentResolver();
 
@@ -93,20 +93,22 @@ public class AlbumActivity extends BaseActivity
 		String where = MediaStore.Audio.Albums.ARTIST + "=?";
 		String[] selection = { artist };
 		String[] columns =
-				{ MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.NUMBER_OF_SONGS, MediaStore.Audio.Albums.ALBUM_ART };
+				{ MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.NUMBER_OF_SONGS, MediaStore.Audio.Albums.ALBUM_ART };
 		String sort = MediaStore.Audio.AudioColumns.ALBUM + " ASC";
-		ArrayList<AlbumTabItem> listItems = new ArrayList<>();
+		ArrayList<Album> listItems = new ArrayList<>();
 		try
 		{
 			Cursor cursor = cr.query(uri, columns, where, selection, sort);
-
+			long id;
 			String title;
 			String albumCover;
 			String numSongs;
 
-			AlbumTabItem item;
+			Album item;
 			while (cursor.moveToNext())
 			{
+				id = cursor
+						.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
 				title = cursor
 						.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
 				albumCover = cursor.getString(cursor
@@ -116,7 +118,7 @@ public class AlbumActivity extends BaseActivity
 
 				if (title.length() > 0)
 				{
-					item = new AlbumTabItem(title, albumCover, numSongs);
+					item = new Album(id, title, albumCover, numSongs);
 					listItems.add(item);
 				}
 			}

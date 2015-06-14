@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.weaver.eric.orion.objects.Song;
+import com.weaver.eric.orion.models.Song;
 
 import java.util.ArrayList;
 

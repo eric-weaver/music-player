@@ -16,12 +16,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.AlbumActivity;
 import com.weaver.eric.orion.adapters.ArtistTabItemAdapter;
-import com.weaver.eric.orion.objects.ArtistTabItem;
+import com.weaver.eric.orion.models.Artist;
 
 public class ArtistTabHostFragment extends Fragment implements
 		OnItemClickListener
@@ -29,8 +28,8 @@ public class ArtistTabHostFragment extends Fragment implements
 	private View mView;
 	private ListView musicList;
 
-	private ArrayList<ArtistTabItem> contentList;
-	private ArrayAdapter<ArtistTabItem> artistAdapter;
+	private ArrayList<Artist> contentList;
+	private ArrayAdapter<Artist> artistAdapter;
 	private ArtistTabItemAdapter adapter;
 
 	@Override
@@ -59,7 +58,7 @@ public class ArtistTabHostFragment extends Fragment implements
 
 	private void initialize()
 	{
-		contentList = new ArrayList<ArtistTabItem>();
+		contentList = new ArrayList<Artist>();
 		musicList = (ListView) mView.findViewById(R.id.list_simple);
 		contentList = getArtistItems();
 		artistAdapter =  new ArtistTabItemAdapter(this.getActivity(), R.layout.item_simple, contentList);
@@ -67,37 +66,36 @@ public class ArtistTabHostFragment extends Fragment implements
 		musicList.setOnItemClickListener(this);
 	}
 
-	private ArrayList<ArtistTabItem> getArtistItems()
+	private ArrayList<Artist> getArtistItems()
 	{
 		ContentResolver cr = mView.getContext().getContentResolver();
-		String where = null;
 		Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-		String artist = MediaStore.Audio.Artists.ARTIST;
-		String album = MediaStore.Audio.Artists.NUMBER_OF_ALBUMS;
-		String song = MediaStore.Audio.Artists.NUMBER_OF_TRACKS;
 		String[] columns =
-		{ artist, album, song };
+		{ MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_ALBUMS, MediaStore.Audio.Artists.NUMBER_OF_TRACKS };
 		String sort = MediaStore.Audio.AudioColumns.ARTIST + " ASC";
-		ArrayList<ArtistTabItem> listItems = new ArrayList<ArtistTabItem>();
+		ArrayList<Artist> listItems = new ArrayList<Artist>();
 		try
 		{
-			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			String title = null;
-			String numAlbums = null;
-			String numSongs = null;
+			Cursor cursor = cr.query(uri, columns, null, null, sort);
+			long id;
+			String title;
+			String numAlbums;
+			String numSongs;
 			
-			ArtistTabItem item;
+			Artist item;
 			while (cursor.moveToNext())
 			{
+				id = cursor
+						.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
 				title = cursor
-						.getString(cursor.getColumnIndexOrThrow(artist));
+						.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
 				numAlbums = cursor.getString(cursor
-						.getColumnIndexOrThrow(album));
+						.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
 				numSongs = cursor.getString(cursor
-						.getColumnIndexOrThrow(song));
+						.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
 				if (title.length() > 0)
 				{
-					item = new ArtistTabItem(title, numAlbums, numSongs);
+					item = new Artist(id, title, numAlbums, numSongs);
 					listItems.add(item);
 				}
 			}

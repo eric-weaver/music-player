@@ -12,12 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.objects.AlbumTabItem;
+import com.weaver.eric.orion.models.Album;
 
-public class AlbumTabItemAdapter extends ArrayAdapter<AlbumTabItem>
+public class AlbumTabItemAdapter extends ArrayAdapter<Album>
 {
 	private Activity context;
-	private ArrayList<AlbumTabItem> objects;
+	private ArrayList<Album> objects;
 	private int resource;
 
 	static class ViewHolder
@@ -28,7 +28,7 @@ public class AlbumTabItemAdapter extends ArrayAdapter<AlbumTabItem>
 	}
 
 	public AlbumTabItemAdapter(Activity context, int resource,
-			ArrayList<AlbumTabItem> objects)
+			ArrayList<Album> objects)
 	{
 		super(context, resource, objects);
 		this.context = context;
@@ -72,9 +72,6 @@ public class AlbumTabItemAdapter extends ArrayAdapter<AlbumTabItem>
 	    }else{
 			holder.image.setImageResource(R.drawable.music_notes);
 		}
-	    
-	    
-
 	    return rowView;
 	}
 }

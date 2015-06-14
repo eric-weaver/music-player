@@ -22,7 +22,7 @@ import android.widget.ListView;
 
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.adapters.SimpleSongAdapter;
-import com.weaver.eric.orion.objects.Song;
+import com.weaver.eric.orion.models.Song;
 
 import java.io.FileDescriptor;
 import java.util.ArrayList;

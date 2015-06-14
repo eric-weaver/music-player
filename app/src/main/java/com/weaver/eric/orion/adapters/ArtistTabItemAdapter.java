@@ -10,12 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.weaver.eric.orion.R;
-import com.weaver.eric.orion.objects.ArtistTabItem;
+import com.weaver.eric.orion.models.Artist;
 
-public class ArtistTabItemAdapter extends ArrayAdapter<ArtistTabItem>
+public class ArtistTabItemAdapter extends ArrayAdapter<Artist>
 {
 	private Activity context;
-	private ArrayList<ArtistTabItem> objects;
+	private ArrayList<Artist> objects;
 	private int resource;
 
 	static class ViewHolder
@@ -25,7 +25,7 @@ public class ArtistTabItemAdapter extends ArrayAdapter<ArtistTabItem>
 	}
 
 	public ArtistTabItemAdapter(Activity context, int resource,
-			ArrayList<ArtistTabItem> objects)
+			ArrayList<Artist> objects)
 	{
 		super(context, resource, objects);
 		this.context = context;

@@ -20,15 +20,15 @@ import android.widget.ListView;
 import com.weaver.eric.orion.R;
 import com.weaver.eric.orion.activities.SongActivity;
 import com.weaver.eric.orion.adapters.AlbumTabItemAdapter;
-import com.weaver.eric.orion.objects.AlbumTabItem;
+import com.weaver.eric.orion.models.Album;
 
 public class AlbumTabHostFragment extends Fragment implements OnItemClickListener
 {
 	private View mView;
 	private ListView musicList;
 
-	private ArrayList<AlbumTabItem> contentList;
-	private ArrayAdapter<AlbumTabItem> artistAdapter;
+	private ArrayList<Album> contentList;
+	private ArrayAdapter<Album> artistAdapter;
 	private AlbumTabItemAdapter adapter;
 	
 	@Override
@@ -51,7 +51,7 @@ public class AlbumTabHostFragment extends Fragment implements OnItemClickListene
 	
 	private void initialize()
 	{
-		contentList = new ArrayList<AlbumTabItem>();
+		contentList = new ArrayList<Album>();
 		musicList = (ListView) mView.findViewById(R.id.list_simple);
 		contentList = getAlbumItems();
 		artistAdapter =  new AlbumTabItemAdapter(this.getActivity(), R.layout.item_simple_image, contentList);
@@ -59,38 +59,37 @@ public class AlbumTabHostFragment extends Fragment implements OnItemClickListene
 		musicList.setOnItemClickListener(this);
 	}
 	
-	private ArrayList<AlbumTabItem> getAlbumItems()
+	private ArrayList<Album> getAlbumItems()
 	{
 		ContentResolver cr = mView.getContext().getContentResolver();
-		String where = null;
 		Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-		String album = MediaStore.Audio.Albums.ALBUM;
-		String song = MediaStore.Audio.Albums.NUMBER_OF_SONGS;
-		String albumArt = MediaStore.Audio.Albums.ALBUM_ART;
 		String[] columns =
-		{ album, song, albumArt };
+		{ MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.NUMBER_OF_SONGS, MediaStore.Audio.Albums.ALBUM_ART };
 		String sort = MediaStore.Audio.AudioColumns.ALBUM + " ASC";
-		ArrayList<AlbumTabItem> listItems = new ArrayList<AlbumTabItem>();
+		ArrayList<Album> listItems = new ArrayList<Album>();
 		try
 		{
-			Cursor cursor = cr.query(uri, columns, where, null, sort);
-			String title = null;
-			String albumCover = null;
-			String numSongs = null;
+			Cursor cursor = cr.query(uri, columns, null, null, sort);
+			long id;
+			String title;
+			String albumCover;
+			String numSongs;
 			
-			AlbumTabItem item;
+			Album item;
 			while (cursor.moveToNext())
 			{
+				id = cursor
+						.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
 				title = cursor
-						.getString(cursor.getColumnIndexOrThrow(album));
+						.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
 				albumCover = cursor.getString(cursor
-						.getColumnIndexOrThrow(albumArt));
+						.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART));
 				numSongs = cursor.getString(cursor
-						.getColumnIndexOrThrow(song));
+						.getColumnIndexOrThrow(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
 				
 				if (title.length() > 0)
 				{
-					item = new AlbumTabItem(title, albumCover, numSongs);
+					item = new Album(id, title, albumCover, numSongs);
 					listItems.add(item);
 				}
 			}
