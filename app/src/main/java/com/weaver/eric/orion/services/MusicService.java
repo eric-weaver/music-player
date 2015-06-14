@@ -102,12 +102,6 @@ public class MusicService extends Service implements
     }
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        savePlayerState();
-    }
-
-    @Override
     public void onCompletion(MediaPlayer mp) {
         nextSong();
     }
